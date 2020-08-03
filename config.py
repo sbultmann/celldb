@@ -13,3 +13,4 @@ class Config(object):
     ALLOWED_EXTENSIONS = ["jpg", "png", "mov", "mp4", "mpg"]
     MAX_CONTENT_LENGTH = 1000 * 1024 * 1024  # 1000mb
     CELLLINES_PER_PAGE = 10
+    LOG_TO_STDOUT = os.environ.get('LOG_TO_STDOUT')
