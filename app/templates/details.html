@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+<div class="container">
+    <h2>Cell line information</h2>
+  
+    <ul class="nav nav-tabs">
+      <li class="active"><a data-toggle="tab" href="#basic_info">Basic Info</a></li>
+      <li><a data-toggle="tab" href="#genetic">Genetic Info</a></li>
+      <li><a data-toggle="tab" href="#culture">Culture Info</a></li>
+      <li><a data-toggle="tab" href="#additional">Additional Info</a></li>
+      <li><a data-toggle="tab" href="#stocks">Stocks</a></li>
+    </ul>
+    <div class="row">
+            <div class="col-md-6">
+    
+        <div class="tab-content">
+        <div id="basic_info" class="tab-pane fade in active">
+                <table class="table table-striped">
+                    <tbody>
+                            <tr>
+                            <th scope="row">id</th>
+                                <td>{{ cell_line.running_number }}</td>
+                            </tr>
+                            <tr>
+                            <th scope="row">Name</th>
+                                <td>{{ cell_line.name }}</td>
+                            </tr>
+                            <tr>
+                            <th scope="row">Cell type</th>
+                                <td>{{ cell_line.celltype }}</td>
+                            </tr>
+                            <tr>
+                            <th scope="row">Species</th>
+                                <td>{{ cell_line.species }}</td>
+                            </tr>
+                            <tr>
+                            <th scope="row">Tissue</th>
+                                <td>{{ cell_line.tissue }}</td>
+                            </tr>
+                    </tbody>
+                </table>
+        </div>
+        <div id="genetic" class="tab-pane fade">
+                <table class="table table-striped">
+                        <tbody>
+                                <tr>
+                                <th scope="row">Modification method</th>
+                                    <td>{{ genotype.modmethod }}</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">Locus/Gene</th>
+                                    <td>{{ genotype.locus }}</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">Epitope tag</th>
+                                    <td>{{ genotype.tag }}</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">Modification type</th>
+                                    <td>{{ genotype.modtype }}</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">Mutation</th>
+                                    <td>{{ genotype.mutation }}</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">Transgene</th>
+                                    <td>{{ genotype.transgene }}</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">Resistance</th>
+                                    <td>{{ genotype.resistance }}</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">Inducible</th>
+                                    <td>{{ genotype.inducible }}</td>
+                                </tr>                                  
+                        </tbody>
+                    </table>            
+        </div>
+        <div id="culture" class="tab-pane fade">
+                <table class="table table-striped">
+                        <tbody>
+                                <tr>
+                                <th scope="row">Biosafety level</th>
+                                    <td>{{ culture.bsl }}</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">Mycoplasma status</th>
+                                    <td>{{ culture.mycoplasma }}</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">Myocpl. PCR date</th>
+                                    <td>{{ culture.pcrdate }}</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">Culture type</th>
+                                    <td>{{ culture.culturetype }}</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">Culture Medium</th>
+                                    <td>{{ culture.medium }}</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">Notes</th>
+                                    <td>{{ culture.notes }}</td>
+                                </tr>
+                                <tr>                          
+                        </tbody>
+                    </table>
+        </div>
+        <div id="additional" class="tab-pane fade">
+                <table class="table table-striped">
+                        <tbody>
+                                <tr>
+                                <th scope="row">Cell line generation protocol</th>
+                                    <td>{{ addinfo.protocol }}</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">Western blot</th>
+                                    <td>{{ addinfo.wb }}</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">Screening PCR</th>
+                                    <td>{{ addinfo.pcr }}</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">Sequencing data</th>
+                                    <td>{{ addinfo.sequencing_info }}</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">FACS plots</th>
+                                    <td>{{ addinfo.facs }}</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">Description</th>
+                                    <td>{{ addinfo.description }}</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">Comments</th>
+                                    <td>{{ addinfo.comments }}</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">Published in</th>
+                                    <td>{{ addinfo.publication }}</td>
+                                </tr>                                  
+                        </tbody>
+                    </table>
+                </div>
+                    <div id="stocks" class="tab-pane fade">
+                    <table class="table table-striped">
+                            <thead class="thead-light">
+                                    <tr>
+                                        <th scope="col">Freezer</th>
+                                        <th scope="col">Rack</th>
+                                        <th scope="col">Box</th>
+                                        <th scope="col">Position</th>
+                                        <th scope="col">Medium</th>
+                                        <th scope="col">Passage</th>
+                                        <th scope="col">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for stock in stocks %}
+                                <tr>
+                                    <td>{{ stock.freezer }}</td>
+                                    <td>{{ stock.rack }}</td>
+                                    <td>{{ stock.box }}</td>
+                                    <td>{{ stock.position }}</td>
+                                    <td>{{ stock.medium }}</td>
+                                    <td>{{ stock.passage }}</td>
+                                    <td>{{ stock.date }}</td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                    </table> 
+                        
+        </div>
+        </div>
+
+            </div>
+    </div>
+  </div>
+
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+<div class="container">
+    <h2>Cell line information</h2>
+    <p>Please fill out the forms below.</p>
+  
+    <ul class="nav nav-tabs">
+      <li class="active"><a data-toggle="tab" href="#basic_info">Basic Info</a></li>
+      <li><a data-toggle="tab" href="#genetic">Genetic Info</a></li>
+      <li><a data-toggle="tab" href="#culture">Culture Info</a></li>
+      <li><a data-toggle="tab" href="#additional">Additional Info</a></li>
+    </ul>
+    <div class="row">
+            <div class="col-md-4">
+    <form class="form form-basic" method="post" role="form">
+            {{ form.hidden_tag() }}
+            {{ wtf.form_errors(form, hiddens="only") }}
+        <div class="tab-content">
+        <div id="basic_info" class="tab-pane fade in active">
+                {{ wtf.form_field(form.basic_information) }}
+        </div>
+        <div id="genetic" class="tab-pane fade">
+            {{ wtf.form_field(form.genetic_information) }}
+        </div>
+        <div id="culture" class="tab-pane fade">
+            {{ wtf.form_field(form.culture_information) }}
+        </div>
+        <div id="additional" class="tab-pane fade">
+            {{ wtf.form_field(form.additional_information) }}
+        </div>
+        </div>
+        {{ form.submit}}
+    </form>
+            </div>
+    </div>
+  </div>
+
+{% endblock %}
