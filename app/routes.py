@@ -25,6 +25,7 @@ def index():
     ]
     return render_template('index.html', title='Home', posts=posts)
 
+""" needs work """
 @app.route('/create')
 @login_required
 def create():
@@ -40,8 +41,6 @@ def cell_lines():
         if cell_lines.has_next else None
     prev_url = url_for('cell_lines', page=cell_lines.prev_num) \
         if cell_lines.has_prev else None
-    #df = pd.read_sql(db.session.query(CellLines).statement, db.session.bind)
-    #df = df.drop(['id', 'user_id'], axis=1)
     return render_template('cell_lines.html', title='Cell Lines', cell_lines=cell_lines.items,
                             next_url=next_url, prev_url=prev_url)
 
