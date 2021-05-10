@@ -4,7 +4,7 @@
 {% block app_content %}
 <div class="container">
     <h2>Cell line information</h2>
-  
+
     <ul class="nav nav-tabs">
       <li class="active"><a data-toggle="tab" href="#basic_info">Basic Info</a></li>
       <li><a data-toggle="tab" href="#genetic">Genetic Info</a></li>
@@ -14,7 +14,7 @@
     </ul>
     <div class="row">
             <div class="col-md-6">
-    
+
         <div class="tab-content">
         <div id="basic_info" class="tab-pane fade in active">
                 <table class="table table-striped">
@@ -76,9 +76,9 @@
                                 <tr>
                                 <th scope="row">Inducible</th>
                                     <td>{{ genotype.inducible }}</td>
-                                </tr>                                  
+                                </tr>
                         </tbody>
-                    </table>            
+                    </table>
         </div>
         <div id="culture" class="tab-pane fade">
                 <table class="table table-striped">
@@ -107,7 +107,7 @@
                                 <th scope="row">Notes</th>
                                     <td>{{ culture.notes }}</td>
                                 </tr>
-                                <tr>                          
+                                <tr>
                         </tbody>
                     </table>
         </div>
@@ -120,19 +120,51 @@
                                 </tr>
                                 <tr>
                                 <th scope="row">Western blot</th>
-                                    <td>{{ addinfo.wb }}</td>
+                                    {% if wb %}
+                                    <td>
+                                    <a href="{{ url_for('full_size_image', filename = wb)}}">
+                                        <img src = "{{ url_for('get_file', filename = wb)}}">
+                                    </a>
+                                    </td>
+                                    {% else %}
+                                    <td>NA</td>
+                                    {% endif %}
                                 </tr>
                                 <tr>
                                 <th scope="row">Screening PCR</th>
-                                    <td>{{ addinfo.pcr }}</td>
+                                    {% if pcr %}
+                                    <td>
+                                    <a href="{{ url_for('full_size_image', filename = pcr)}}">
+                                        <img src = "{{ url_for('get_file', filename = pcr)}}">
+                                    </a>
+                                    </td>
+                                    {% else %}
+                                    <td>NA</td>
+                                    {% endif %}
                                 </tr>
                                 <tr>
                                 <th scope="row">Sequencing data</th>
-                                    <td>{{ addinfo.sequencing_info }}</td>
+                                    {% if seq %}
+                                    <td>
+                                    <a href="{{ url_for('full_size_image', filename = seq)}}">
+                                        <img src = "{{ url_for('get_file', filename = seq)}}">
+                                    </a>
+                                    </td>
+                                    {% else %}
+                                    <td>NA</td>
+                                    {% endif %}
                                 </tr>
                                 <tr>
                                 <th scope="row">FACS plots</th>
-                                    <td>{{ addinfo.facs }}</td>
+                                    {% if facs %}
+                                    <td>
+                                    <a href="{{ url_for('full_size_image', filename = facs)}}">
+                                        <img src = "{{ url_for('get_file', filename = facs)}}">
+                                    </a>
+                                    </td>
+                                    {% else %}
+                                    <td>NA</td>
+                                    {% endif %}
                                 </tr>
                                 <tr>
                                 <th scope="row">Description</th>
@@ -145,39 +177,44 @@
                                 <tr>
                                 <th scope="row">Published in</th>
                                     <td>{{ addinfo.publication }}</td>
-                                </tr>                                  
+                                </tr>
                         </tbody>
                     </table>
                 </div>
-                    <div id="stocks" class="tab-pane fade">
-                    <table class="table table-striped">
-                            <thead class="thead-light">
-                                    <tr>
-                                        <th scope="col">Freezer</th>
-                                        <th scope="col">Rack</th>
-                                        <th scope="col">Box</th>
-                                        <th scope="col">Position</th>
-                                        <th scope="col">Medium</th>
-                                        <th scope="col">Passage</th>
-                                        <th scope="col">Date</th>
-                                    </tr>
-                                </thead>
+                <div id="stocks" class="tab-pane fade">
+                        <table class="table table-striped">
                                 <tbody>
-                                {% for stock in stocks %}
-                                <tr>
-                                    <td>{{ stock.freezer }}</td>
-                                    <td>{{ stock.rack }}</td>
-                                    <td>{{ stock.box }}</td>
-                                    <td>{{ stock.position }}</td>
-                                    <td>{{ stock.medium }}</td>
-                                    <td>{{ stock.passage }}</td>
-                                    <td>{{ stock.date }}</td>
-                                </tr>
-                                {% endfor %}
+                                        <tr>
+                                        <th scope="row">Freezer</th>
+                                            <td>{{ stocks.freezer }}</td>
+                                        </tr>
+                                        <tr>
+                                        <th scope="row">Rack</th>
+                                            <td>{{ stocks.rack }}</td>
+                                        </tr>
+                                        <tr>
+                                        <th scope="row">Box</th>
+                                            <td>{{ stocks.box}}</td>
+                                        </tr>
+                                        <tr>
+                                        <th scope="row">Position</th>
+                                            <td>{{ stocks.position }}</td>
+                                        </tr>
+                                        <tr>
+                                        <th scope="row">Medium</th>
+                                            <td>{{ stocks.medium }}</td>
+                                        </tr>
+                                        <tr>
+                                        <th scope="row">Passage</th>
+                                            <td>{{ stocks.passage }}</td>
+                                        </tr>
+                                        <tr>
+                                        <th scope="row">Date</th>
+                                            <td>{{ stocks.date }}</td>
+                                        </tr>
                                 </tbody>
-                    </table> 
-                        
-        </div>
+                            </table>
+                        </div>
         </div>
 
             </div>
