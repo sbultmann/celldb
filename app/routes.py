@@ -32,8 +32,6 @@ def index():
     ]
     return render_template('index.html', title='Home', posts=posts)
 
-#needs work
-
 
 @app.route('/create',methods=['GET','POST'])
 @login_required
