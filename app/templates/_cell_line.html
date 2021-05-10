@@ -9,11 +9,15 @@
                 <th scope="col">Species</th>
                 <th scope="col">Tissue</th>
                 <th scope="col">Details</th>
+                {% if current_user.is_admin %}
+                <th scope="col">Delete</th>
+                {% else %}
+                {% endif %}
             </tr>
         </thead>
         <tbody>
         {% for cell_line in cell_lines %}
-        
+
         <tr>
             <td width="70px">
                 {{ cell_line.running_number }}
@@ -33,6 +37,12 @@
             <td>
                 <a href="{{ url_for('details', cell_id=cell_line.id) }}">click for details</a>
             </td>
+            {% if current_user.is_admin %}
+            <td>
+                <a href="{{ url_for('delete', cell_id=cell_line.id) }}" onclick="return confirm('Are you sure to delete this entry?')">delete</a>
+            </td>
+            {% else %}
+            {% endif %}
         </tr>
         {% endfor %}
     </tbody>

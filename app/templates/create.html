@@ -5,33 +5,42 @@
 <div class="container">
     <h2>Cell line information</h2>
     <p>Please fill out the forms below.</p>
-  
+
     <ul class="nav nav-tabs">
       <li class="active"><a data-toggle="tab" href="#basic_info">Basic Info</a></li>
       <li><a data-toggle="tab" href="#genetic">Genetic Info</a></li>
       <li><a data-toggle="tab" href="#culture">Culture Info</a></li>
+      <li><a data-toggle="tab" href="#stocks">Stocks Info</a></li>
       <li><a data-toggle="tab" href="#additional">Additional Info</a></li>
     </ul>
     <div class="row">
             <div class="col-md-4">
-    <form class="form form-basic" method="post" role="form">
+    <form class="form form-basic" method="post" role="form" enctype = "multipart/form-data" >
             {{ form.hidden_tag() }}
             {{ wtf.form_errors(form, hiddens="only") }}
         <div class="tab-content">
         <div id="basic_info" class="tab-pane fade in active">
-                {{ wtf.form_field(form.basic_information) }}
+            {{ form.basic_information.hidden_tag() }}
+            {{ wtf.form_field(form.basic_information) }}<span class="validation_error">{{ ', '.join(form.basic_information.errors) }}</span><br>
         </div>
         <div id="genetic" class="tab-pane fade">
-            {{ wtf.form_field(form.genetic_information) }}
+            {{ form.genetic_information.hidden_tag() }}
+            {{ wtf.form_field(form.genetic_information) }}<span class="validation_error">{{ ', '.join(form.genetic_information.errors) }}</span><br>
         </div>
         <div id="culture" class="tab-pane fade">
-            {{ wtf.form_field(form.culture_information) }}
+            {{ form.culture_information.hidden_tag() }}
+            {{ wtf.form_field(form.culture_information) }}<span class="validation_error">{{ ', '.join(form.culture_information.errors) }}</span><br>
+        </div>
+        <div id="stocks" class="tab-pane fade">
+            {{ form.stocks.hidden_tag() }}
+            {{ wtf.form_field(form.stocks) }}<span class="validation_error">{{ ', '.join(form.stocks.errors) }}</span><br>
         </div>
         <div id="additional" class="tab-pane fade">
-            {{ wtf.form_field(form.additional_information) }}
+            {{ form.additional_information.hidden_tag() }}
+            {{ wtf.form_field(form.additional_information) }}<span class="validation_error">{{ ', '.join(form.additional_information.errors) }}</span><br>
+            {{ form.submit}}
         </div>
         </div>
-        {{ form.submit}}
     </form>
             </div>
     </div>
