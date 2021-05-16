@@ -36,7 +36,7 @@ def index():
     form = SearchForm()
     return render_template('index.html', title='Home', posts=posts, form = form)
 
-#needs work
+
 @app.route('/search', methods=['GET','POST'])
 @login_required
 def search():
