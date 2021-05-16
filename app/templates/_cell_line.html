@@ -13,6 +13,7 @@
                 <th scope="col">Delete</th>
                 {% else %}
                 {% endif %}
+                <th scope="col">Edit</th>
             </tr>
         </thead>
         <tbody>
@@ -42,6 +43,15 @@
                 <a href="{{ url_for('delete', cell_id=cell_line.id) }}" onclick="return confirm('Are you sure to delete this entry?')">delete</a>
             </td>
             {% else %}
+            {% endif %}
+            {% if current_user.is_admin or cell_line.user_id == current_user.id %}
+            <td>
+                <a href="{{ url_for('edit', cell_id=cell_line.id) }}" >edit</a>
+            </td>
+            {% else %}
+            <td>
+                No permission
+            </td>
             {% endif %}
         </tr>
         {% endfor %}

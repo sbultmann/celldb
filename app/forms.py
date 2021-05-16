@@ -1,9 +1,10 @@
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm, RecaptchaField
 from flask_wtf.file import FileField
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, SelectField, DateField, FormField, IntegerField
-from wtforms.validators import DataRequired, NoneOf, AnyOf, ValidationError, EqualTo, Email
+from wtforms.validators import DataRequired, NoneOf, AnyOf, ValidationError, EqualTo, Email, Length
 from app import db
 from app.models import User, CellLines
+from flask import request
 
 def pick_option(form, field):
     print(field.data)
@@ -14,6 +15,7 @@ class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me')
+    #recaptcha = RecaptchaField()
     submit = SubmitField('Sign In')
 
 class RegisterForm(FlaskForm):
@@ -21,6 +23,7 @@ class RegisterForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     password2 = PasswordField('Repeat Password', validators=[DataRequired(),EqualTo('password')])
+    #recaptcha = RecaptchaField()
     submit = SubmitField('Register')
 
     def validate_username(self, username):
@@ -42,14 +45,16 @@ class BasicInfo(FlaskForm):
     running_number = StringField("Running number", validators=[DataRequired()])
 
     def validate_name(self, name):
-        name = CellLines.query.filter_by(name=name.data).first()
-        if name is not None:
-            raise ValidationError('The name is already exsited.')
+        cl = CellLines.query.filter_by(name=name.data).first()
+        if cl is not None:
+            if (request.endpoint is not 'edit') or (request.endpoint is 'edit' and cl.name is not CellLines.query.get(int(request.url.rpartition('/')[2])).name):
+                raise ValidationError('The name is already exsited.')
 
     def validate_running_number(self, running_number):
-        name = CellLines.query.filter_by(running_number=running_number.data).first()
-        if name is not None:
-            raise ValidationError('The running_number is already exsited.')
+        cl = CellLines.query.filter_by(running_number=running_number.data).first()
+        if running_number is not None:
+            if (request.endpoint is not 'edit') or (request.endpoint is 'edit' and cl.running_number is not CellLines.query.get(int(request.url.rpartition('/')[2])).running_number):
+                raise ValidationError('The running_number is already exsited.')
 
 class GeneticInfo(FlaskForm):
     modmethod = StringField('Modification method', validators=[DataRequired()])
@@ -70,7 +75,7 @@ class CultureInfo(FlaskForm):
     medium = StringField('Culture medium', validators=[DataRequired()])
     notes = TextAreaField('Notes')
 
-class Stocks(FlaskForm):
+class StocksForm(FlaskForm):
     freezer = StringField('Freezer')
     rack = StringField('Rack')
     box = StringField('Box')
@@ -93,6 +98,12 @@ class CreateNewCellLine(FlaskForm):
     basic_information = FormField(BasicInfo)
     genetic_information = FormField(GeneticInfo)
     culture_information = FormField(CultureInfo)
-    stocks = FormField(Stocks)
+    stocks = FormField(StocksForm)
     additional_information = FormField(AdditionalInfo)
     submit = SubmitField('Create')
+
+class SearchForm(FlaskForm):
+    kw = StringField(" ", validators = [DataRequired()])
+    kw_type = SelectField(" ", choices=[('All','All'),('Name','Name'),('ID','ID'),('Cell type','Cell type'),('Tissue','Tissue'), ('Species','Species')],
+                            validators = [DataRequired(), Length(min = 2, max = 20)], default = 'All')
+    submit = SubmitField('Search')

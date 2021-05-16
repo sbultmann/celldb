@@ -1,5 +1,5 @@
 from datetime import datetime, date
-from app import db, login
+from app import db, login, whooshee
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -15,6 +15,7 @@ class User(UserMixin,db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     role = db.Column(db.String, default = 'USER')
+    cell_line = db.relationship('CellLines',backref = 'user', lazy= 'dynamic')
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -29,7 +30,7 @@ class User(UserMixin,db.Model):
     def is_admin(self):
         return self.role == 'ADMIN'
 
-
+@whooshee.register_model('name','running_number','celltype','species','tissue')
 class CellLines(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     running_number = db.Column(db.String(128), index=True, unique=True)
