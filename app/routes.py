@@ -30,7 +30,7 @@ def index():
     form = SearchForm()
     return render_template('index.html', title='Home', cell_lines = cl, form = form)
 
-#needs work
+
 @app.route('/search', methods=['GET','POST'])
 @login_required
 def search():
