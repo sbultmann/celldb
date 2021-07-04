@@ -3,10 +3,77 @@
 
 {% block content %}
     <h1>Hi, {{ current_user.username }}!</h1>
-    {% for post in posts %}
-    <div><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>
-    {% endfor %}
+    <table id = "dtBasicExample" class="table table-striped table-hover">
+        <caption style='font-size:20px;'>You can find recently edited cell lines below.</caption>
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Cell type</th>
+                <th scope="col">Species</th>
+                <th scope="col">Tissue</th>
+                <th scope="col">Details</th>
+                {% if current_user.is_admin %}
+                <th scope="col">Delete</th>
+                {% else %}
+                {% endif %}
+                <th scope="col">Edit</th>
+                <th scope="col">Most recent editor</th>
+                <th scope="col">Last modification</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for cell_line in cell_lines %}
+        <tr>
+            <td width="70px">
+                {{ cell_line.running_number }}
+            </td>
+            <td>
+                {{ cell_line.name}}
+            </td>
+            <td>
+                {{ cell_line.celltype}}
+            </td>
+            <td>
+                {{ cell_line.species}}
+            </td>
+            <td>
+                {{ cell_line.tissue}}
+            </td>
+            <td>
+                <a href="{{ url_for('details', cell_id=cell_line.id) }}">click for details</a>
+            </td>
+            {% if current_user.is_admin %}
+            <td>
+                <a href="{{ url_for('delete', cell_id=cell_line.id) }}" onclick="return confirm('Are you sure to delete this entry?')">delete</a>
+            </td>
+            {% else %}
+            {% endif %}
+            {% if current_user.is_admin or cell_line.user_id == current_user.id %}
+            <td>
+                <a href="{{ url_for('edit', cell_id=cell_line.id) }}" >edit</a>
+            </td>
+            {% else %}
+            <td>
+                No permission
+            </td>
+            {% endif %}
+            <td>
+                {% if cell_line.user_id %}
+                {{ cell_line.user.username }}
+                {% else %}
+                NA
+                {% endif %}
+            </td>
+            <td>
+                {{ cell_line.timeedited.strftime("%d/%m/%Y %X") }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
     <div>
+        <p style='font-size:20px;'>Search for cell lines...</p>
         <form method="post" action="{{ url_for('search') }}"  class="form-inline">
         {{ form.hidden_tag() }}
          <p>{{ wtf.form_field(form.kw, placeholder="search...") }}{{ wtf.form_field(form.kw_type) }}{{ wtf.form_field(form.submit) }}</p>

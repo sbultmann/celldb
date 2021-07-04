@@ -1,6 +1,6 @@
 <div class="table-responsive">
     <table id = "dtBasicExample" class="table table-striped table-hover">
-        <caption>All cell lines</caption>
+        <caption>All cell lines  <a href="{{ url_for('export_all')}}">Export all cell lines</a></caption>
         <thead class="thead-light">
             <tr>
                 <th scope="col">id</th>
@@ -14,6 +14,8 @@
                 {% else %}
                 {% endif %}
                 <th scope="col">Edit</th>
+                <th scope="col">Most recent editor</th>
+                <th scope="col">Last modification</th>
             </tr>
         </thead>
         <tbody>
@@ -53,6 +55,16 @@
                 No permission
             </td>
             {% endif %}
+            <td>
+                {% if cell_line.user_id %}
+                {{ cell_line.user.username }}
+                {% else %}
+                NA
+                {% endif %}
+            </td>
+            <td>
+                {{ cell_line.timeedited.strftime("%d/%m/%Y %X") }}
+            </td>
         </tr>
         {% endfor %}
     </tbody>

@@ -37,6 +37,7 @@ class CellLines(db.Model):
     name = db.Column(db.String(128), index=True, unique=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    timeedited = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     celltype = db.Column(db.String(128), index=True, unique=False)
     species = db.Column(db.String(128), index=True, unique=False)
     tissue = db.Column(db.String(128), index=True, unique=False)
