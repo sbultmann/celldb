@@ -52,7 +52,7 @@ class BasicInfo(FlaskForm):
 
     def validate_running_number(self, running_number):
         cl = CellLines.query.filter_by(running_number=running_number.data).first()
-        if running_number is not None:
+        if cl is not None:
             if (request.endpoint is not 'edit') or (request.endpoint is 'edit' and cl.running_number is not CellLines.query.get(int(request.url.rpartition('/')[2])).running_number):
                 raise ValidationError('The running_number is already exsited.')
 
@@ -100,7 +100,7 @@ class CreateNewCellLine(FlaskForm):
     culture_information = FormField(CultureInfo)
     stocks = FormField(StocksForm)
     additional_information = FormField(AdditionalInfo)
-    submit = SubmitField('Create')
+    submit = SubmitField('Submit')
 
 class SearchForm(FlaskForm):
     kw = StringField(" ", validators = [DataRequired()])

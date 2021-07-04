@@ -1,16 +1,16 @@
 from flask import render_template,request
-from app import app, db, whooshee
+from app import app, db, whooshee, mail
 from app.forms import LoginForm, CreateNewCellLine, RegisterForm, SearchForm, BasicInfo, GeneticInfo, CultureInfo, AdditionalInfo, StocksForm
 from flask import render_template, flash, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
 from werkzeug.urls import url_parse
 from app.models import User, CellLines, Stocks, Genotype, CellCulture, CellLineGeneration
 from flask_login import current_user, login_user, logout_user, login_required
-import pandas as pd
 from io import BytesIO
 import base64
 # from app.captcha import Captcha
 import os
+import pandas
 from app.filename import random_filename
 from app.resize import resize_image
 import re
@@ -18,23 +18,17 @@ from flask_wtf import FlaskForm, RecaptchaField
 from flask_wtf.file import FileField
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, SelectField, DateField, FormField, IntegerField
 from wtforms.validators import DataRequired, NoneOf, AnyOf, ValidationError, EqualTo, Email, Length
+from sqlalchemy import desc
+from flask_mail import Message
+from datetime import datetime
 
 @app.route('/')
 @app.route('/index', methods=['GET','POST'])
 @login_required
 def index():
-    posts = [
-        {
-            'author': {'username': 'John'},
-            'body': 'Beautiful day in Portland!'
-        },
-        {
-            'author': {'username': 'Susan'},
-            'body': 'The Avengers movie was so cool!'
-        }
-    ]
+    cl = CellLines.query.order_by(desc(CellLines.timeedited)).all()[:5]
     form = SearchForm()
-    return render_template('index.html', title='Home', posts=posts, form = form)
+    return render_template('index.html', title='Home', cell_lines = cl, form = form)
 
 
 @app.route('/search', methods=['GET','POST'])
@@ -236,6 +230,8 @@ def edit(cell_id):
             cl.species = form.basic_information.data["species"]
             cl.tissue = form.basic_information.data["tissue"]
             cl.running_number =  form.basic_information.data["running_number"]
+            cl.user_id = current_user.id
+            cl.timeedited = datetime.utcnow()
             stocks.date = form.stocks.data["date"]
             stocks.freezer = form.stocks.data["freezer"]
             stocks.rack = form.stocks.data["rack"]
@@ -327,6 +323,55 @@ def cell_lines():
 def get_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+@app.route('/exp_csv/<int:cell_id>')
+@login_required
+def export_csv(cell_id):
+    cl = CellLines.query.get(cell_id)
+    genotype = cl.genetic_info.all()[0]
+    culture = cl.culture_info.all()[0]
+    addinfo = cl.additional_info.all()[0]
+    stocks = cl.stocks.all()[0]
+    cl_table = pandas.DataFrame({"id":cl.running_number, "name":cl.name, "celltype":cl.celltype, "tissue":cl.tissue, "species":cl.species,
+                                "modification_method":genotype.modmethod, "locus/gene":genotype.locus, "tag":genotype.tag,	"modification type":genotype.modtype,
+                                "mutation":genotype.mutation, "transgene":genotype.transgene, "resistance":genotype.resistance,	"inducible":genotype.inducible,
+                                "biosafety level":culture.bsl, "mycoplasma status":culture.mycoplasma, "myco PCR date":culture.pcrdate, "culture type":culture.culturetype,
+                                "medium":culture.medium, "notes":culture.notes, "protocol":addinfo.protocol, "description":addinfo.description, "comments":addinfo.comments, "publication":addinfo.publication,
+                                "stocks.date":stocks.date, "stocks.passage":stocks.passage, "stocks.medium":stocks.medium,	"stocks.freezer":stocks.freezer, "stocks.rack":stocks.rack,
+                                "stocks.box":stocks.box, "stocks.position":stocks.position}, index=[1])
+    csv_name=cl.running_number+".csv"
+    cl_table.to_csv(os.path.join(app.config['CSV_FOLDER'], csv_name))
+    return send_from_directory(app.config['CSV_FOLDER'], csv_name, as_attachment=True)
+
+@app.route('/exp_all')
+@login_required
+def export_all():
+    cl_all = CellLines.query.all()
+    cl_table = pandas.DataFrame(columns=("id", "name", "celltype", "tissue", "species",
+                                "modification_method", "locus/gene", "tag",	"modification type",
+                                "mutation", "transgene", "resistance",	"inducible",
+                                "biosafety level", "mycoplasma status", "myco PCR date", "culture type",
+                                "medium", "notes", "protocol", "description", "comments", "publication",
+                                "stocks.date", "stocks.passage", "stocks.medium",	"stocks.freezer", "stocks.rack",
+                                "stocks.box", "stocks.position"))
+    count=0
+    for cl in cl_all:
+        genotype = cl.genetic_info.all()[0]
+        culture = cl.culture_info.all()[0]
+        addinfo = cl.additional_info.all()[0]
+        stocks = cl.stocks.all()[0]
+        cl_table.loc[count] = [cl.running_number, cl.name, cl.celltype, cl.tissue, cl.species,
+                                genotype.modmethod, genotype.locus, genotype.tag,genotype.modtype,
+                                genotype.mutation, genotype.transgene, genotype.resistance, genotype.inducible,
+                                culture.bsl, culture.mycoplasma, culture.pcrdate, culture.culturetype,
+                                culture.medium, culture.notes, addinfo.protocol, addinfo.description, addinfo.comments, addinfo.publication,
+                                stocks.date, stocks.passage, stocks.medium,	stocks.freezer, stocks.rack,
+                                stocks.box, stocks.position]
+        count += 1
+
+    csv_name="all_cell_lines.csv"
+    cl_table.to_csv(os.path.join(app.config['CSV_FOLDER'], csv_name))
+    return send_from_directory(app.config['CSV_FOLDER'], csv_name, as_attachment=True)
+
 @app.route('/full_size_image/<path:filename>')
 @login_required
 def full_size_image(filename):
@@ -352,8 +397,6 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = LoginForm()
-    #c = Captcha()
-    #image, code = c.CaptchaGenerator()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
@@ -366,6 +409,8 @@ def login():
         return redirect(next_page)
     return render_template('login.html', title='Sign In', form=form)
 
+'''
+The registration function is deprecated now.
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -380,6 +425,7 @@ def register():
         flash('Registration successful!')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
+'''
 
 @app.route('/logout')
 def logout():

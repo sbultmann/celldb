@@ -29,3 +29,5 @@ class Color:
 
 c = Color()
 print(c.Col())
+
+#  m = Message(subject='hello',recipients=['yuekeyang<1159332668@qq.com>'], body='Test from cellDB')

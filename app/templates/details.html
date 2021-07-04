@@ -11,6 +11,7 @@
       <li><a data-toggle="tab" href="#culture">Culture Info</a></li>
       <li><a data-toggle="tab" href="#additional">Additional Info</a></li>
       <li><a data-toggle="tab" href="#stocks">Stocks</a></li>
+      <li><a data-toggle="tab" href="#export">Export</a></li>
     </ul>
     <div class="row">
             <div class="col-md-6">
@@ -213,8 +214,18 @@
                                             <td>{{ stocks.date }}</td>
                                         </tr>
                                 </tbody>
-                            </table>
-                        </div>
+                        </table>
+                </div>
+                <div id="export" class="tab-pane fade">
+                        <table class="table table-striped">
+                                <tbody>
+                                        <tr>
+                                        <th scope="row">Export csv file</th>
+                                            <td><a href="{{ url_for('export_csv', cell_id=cell_line.id)}}">Download</a></td>
+                                        </tr>
+                                </tbody>
+                        </table>
+                </div>
         </div>
 
             </div>
