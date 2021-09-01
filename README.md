@@ -60,16 +60,25 @@ An administrator has the permission to delete/modify any entries.
 You do not have access to any functions of celldb until you login with your username and password.
 ### Homepage
 On the homepage of celldb, you will find most recently edited entries. Below the entries, there is a search box which allows you to find targets efficiently. With the navigation bar on top of the page, other functions can be found. You will be introduced to them later.
-![Homepage](.\images\home.png)
+
+![Homepage](./images/home.png)
+
 The search box allows you to specify a keyword and the type of the keyword to help you find cell lines you want. The example usage of search function is shown below.
-![Search box](.\images\search1.png)
-![Results of searching](.\images\search2.png)
+
+![Search box](./images/search1.png)
+
+![Results of searching](./images/search2.png)
+
 ### Cell lines
 #### All cell lines
 You can easily get access to all cell lines in the database with the 'cell lines' button on the homepage. By clicking each cell line, you will find detailed information. It is noteworthy that only administrators are allowed to modify/delete any entries and a normal user can only edit entries that were created by him/her. You may notice the 'Export all cell lines' button and as its name suggested, you can export a csv file with all information of all cell lines.
-![All cell lines](.\images\allcl.png)
+
+![All cell lines](./images/allcl.png)
+
 ### New entry
 The new entry page enables you to create new entries of cell lines. Just fill in the form and click on submit, then your new cell line is created.
-![New entry](.\images\new1.png)
+
+![New entry](./images/new1.png)
+
 ## Acknowledgement
 I thank my supervisor Dr. Sebastain Bultmann for his support and guidance to this project. The webapp development course taught by him also gave me a lot of inspiration.
